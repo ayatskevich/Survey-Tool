@@ -22,46 +22,40 @@ export const AdminUsersPage: React.FC = () => {
   const [newRole, setNewRole] = useState<string>('');
 
   // Queries
-  const { data, isLoading } = useQuery(
-    ['adminUsers', filters],
-    () => getUsers(filters),
-    {
-      keepPreviousData: true,
-    }
-  );
+  const { data = { items: [], totalCount: 0, page: 1, pageSize: 20 }, isLoading } = useQuery({
+    queryKey: ['adminUsers', filters],
+    queryFn: () => getUsers(filters),
+    placeholderData: (previousData) => previousData,
+  });
 
   // Mutations
-  const updateRoleMutation = useMutation(
-    (data: { userId: string; role: string }) => updateUserRole(data.userId, data.role),
-    {
-      onSuccess: () => {
-        setSuccessMessage('User role updated successfully');
-        setEditingRoleUserId(null);
-        queryClient.invalidateQueries(['adminUsers']);
-        setTimeout(() => setSuccessMessage(''), 3000);
-      },
-      onError: (error: any) => {
-        setErrorMessage(error.response?.data?.message || 'Failed to update user role');
-        setTimeout(() => setErrorMessage(''), 3000);
-      },
-    }
-  );
+  const updateRoleMutation = useMutation({
+    mutationFn: (data: { userId: string; role: string }) => updateUserRole(data.userId, data.role),
+    onSuccess: () => {
+      setSuccessMessage('User role updated successfully');
+      setEditingRoleUserId(null);
+      queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
+      setTimeout(() => setSuccessMessage(''), 3000);
+    },
+    onError: (error: any) => {
+      setErrorMessage(error.response?.data?.message || 'Failed to update user role');
+      setTimeout(() => setErrorMessage(''), 3000);
+    },
+  });
 
-  const suspendMutation = useMutation(
-    (data: { userId: string; suspend: boolean; reason?: string }) =>
+  const suspendMutation = useMutation({
+    mutationFn: (data: { userId: string; suspend: boolean; reason?: string }) =>
       suspendUser(data.userId, data.suspend, data.reason),
-    {
-      onSuccess: () => {
-        setSuccessMessage('User status updated successfully');
-        queryClient.invalidateQueries(['adminUsers']);
-        setTimeout(() => setSuccessMessage(''), 3000);
-      },
-      onError: (error: any) => {
-        setErrorMessage(error.response?.data?.message || 'Failed to update user status');
-        setTimeout(() => setErrorMessage(''), 3000);
-      },
-    }
-  );
+    onSuccess: () => {
+      setSuccessMessage('User status updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
+      setTimeout(() => setSuccessMessage(''), 3000);
+    },
+    onError: (error: any) => {
+      setErrorMessage(error.response?.data?.message || 'Failed to update user status');
+      setTimeout(() => setErrorMessage(''), 3000);
+    },
+  });
 
   // Handlers
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,7 +220,7 @@ export const AdminUsersPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                users.map((user) => (
+                users.map((user: AdminUserDto) => (
                   <tr key={user.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm text-gray-900">{user.email}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">
@@ -246,7 +240,7 @@ export const AdminUsersPage: React.FC = () => {
                           </select>
                           <button
                             onClick={() => handleUpdateRole(user.id, newRole)}
-                            disabled={updateRoleMutation.isLoading}
+                            disabled={updateRoleMutation.isPending}
                             className="px-2 py-1 bg-blue-500 text-white rounded text-sm disabled:opacity-50"
                           >
                             Save
@@ -280,7 +274,7 @@ export const AdminUsersPage: React.FC = () => {
                     <td className="px-6 py-4 text-sm">
                       <button
                         onClick={() => handleToggleSuspend(user)}
-                        disabled={suspendMutation.isLoading}
+                        disabled={suspendMutation.isPending}
                         className={`inline-flex items-center gap-2 px-3 py-1 rounded text-sm ${
                           user.isActive
                             ? 'bg-red-100 text-red-700 hover:bg-red-200'

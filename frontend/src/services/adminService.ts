@@ -1,6 +1,5 @@
 import { api } from './api';
 import type {
-  AdminUserDto,
   UserFiltersDto,
   UserPageDto,
   RoleUpdateResultDto,
@@ -9,6 +8,7 @@ import type {
   SurveyPageDto,
   CloneSurveyResultDto,
   BulkArchiveResultDto,
+  ExportAnalyticsDto,
 } from '../types';
 
 // User Management API
@@ -50,4 +50,35 @@ export const bulkArchiveSurveys = async (surveyIds: string[], archive: boolean =
     archive,
   });
   return response.data;
+};
+
+// Analytics Export API
+
+export const exportAnalytics = async (dto: ExportAnalyticsDto): Promise<void> => {
+  const response = await api.post('/analytics/export', dto, {
+    responseType: 'blob',
+  });
+  
+  // Extract filename from response or use default
+  const contentDisposition = response.headers['content-disposition'];
+  let fileName = `survey_export_${new Date().toISOString().split('T')[0]}.${dto.format}`;
+  if (contentDisposition) {
+    const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+    if (matches?.[1]) {
+      fileName = matches[1].replace(/['"]/g, '');
+    }
+  }
+  
+  // Create blob and trigger download
+  const blob = new Blob([response.data], { 
+    type: dto.format === 'csv' ? 'text/csv' : 'application/json' 
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };

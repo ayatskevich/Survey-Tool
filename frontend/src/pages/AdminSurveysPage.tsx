@@ -23,46 +23,42 @@ export const AdminSurveysPage: React.FC = () => {
   const [cloningId, setCloningId] = useState<string | null>(null);
 
   // Queries
-  const { data, isLoading } = useQuery(
-    ['adminSurveys', filters],
-    () => getSurveys(filters),
-    { keepPreviousData: true }
-  );
+  const { data = { items: [], totalCount: 0, page: 1, pageSize: 20 }, isLoading } = useQuery({
+    queryKey: ['adminSurveys', filters],
+    queryFn: () => getSurveys(filters),
+    placeholderData: (previousData) => previousData,
+  });
 
   // Mutations
-  const cloneMutation = useMutation(
-    (data: { surveyId: string; newTitle: string }) => cloneSurvey(data.surveyId, data.newTitle),
-    {
-      onSuccess: () => {
-        setSuccessMessage('Survey cloned successfully');
-        setCloningId(null);
-        setCloneTitle('');
-        queryClient.invalidateQueries(['adminSurveys']);
-        setTimeout(() => setSuccessMessage(''), 3000);
-      },
-      onError: (error: any) => {
-        setErrorMessage(error.response?.data?.message || 'Failed to clone survey');
-        setTimeout(() => setErrorMessage(''), 3000);
-      },
-    }
-  );
+  const cloneMutation = useMutation({
+    mutationFn: (data: { surveyId: string; newTitle: string }) => cloneSurvey(data.surveyId, data.newTitle),
+    onSuccess: () => {
+      setSuccessMessage('Survey cloned successfully');
+      setCloningId(null);
+      setCloneTitle('');
+      queryClient.invalidateQueries({ queryKey: ['adminSurveys'] });
+      setTimeout(() => setSuccessMessage(''), 3000);
+    },
+    onError: (error: any) => {
+      setErrorMessage(error.response?.data?.message || 'Failed to clone survey');
+      setTimeout(() => setErrorMessage(''), 3000);
+    },
+  });
 
-  const archiveMutation = useMutation(
-    (data: { surveyIds: string[]; archive: boolean }) =>
+  const archiveMutation = useMutation({
+    mutationFn: (data: { surveyIds: string[]; archive: boolean }) =>
       bulkArchiveSurveys(data.surveyIds, data.archive),
-    {
-      onSuccess: () => {
-        setSuccessMessage('Surveys updated successfully');
-        setSelectedSurveys(new Set());
-        queryClient.invalidateQueries(['adminSurveys']);
-        setTimeout(() => setSuccessMessage(''), 3000);
-      },
-      onError: (error: any) => {
-        setErrorMessage(error.response?.data?.message || 'Failed to update surveys');
-        setTimeout(() => setErrorMessage(''), 3000);
-      },
-    }
-  );
+    onSuccess: () => {
+      setSuccessMessage('Surveys updated successfully');
+      setSelectedSurveys(new Set());
+      queryClient.invalidateQueries({ queryKey: ['adminSurveys'] });
+      setTimeout(() => setSuccessMessage(''), 3000);
+    },
+    onError: (error: any) => {
+      setErrorMessage(error.response?.data?.message || 'Failed to update surveys');
+      setTimeout(() => setErrorMessage(''), 3000);
+    },
+  });
 
   // Handlers
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,14 +159,14 @@ export const AdminSurveysPage: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => handleBulkArchive(true)}
-                disabled={archiveMutation.isLoading}
+                disabled={archiveMutation.isPending}
                 className="px-3 py-1 bg-orange-500 text-white rounded text-sm disabled:opacity-50"
               >
                 Archive
               </button>
               <button
                 onClick={() => handleBulkArchive(false)}
-                disabled={archiveMutation.isLoading}
+                disabled={archiveMutation.isPending}
                 className="px-3 py-1 bg-green-500 text-white rounded text-sm disabled:opacity-50"
               >
                 Unarchive
@@ -192,7 +188,7 @@ export const AdminSurveysPage: React.FC = () => {
                     checked={selectedSurveys.size === surveys.length && surveys.length > 0}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedSurveys(new Set(surveys.map((s) => s.id)));
+                        setSelectedSurveys(new Set(surveys.map((s: SurveyItemDto) => s.id)));
                       } else {
                         setSelectedSurveys(new Set());
                       }
@@ -270,12 +266,12 @@ export const AdminSurveysPage: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   onClick={() => {
-                    const survey = surveys.find((s) => s.id === cloningId);
+                    const survey = surveys.find((s: SurveyItemDto) => s.id === cloningId);
                     if (survey && cloneTitle.trim()) {
                       handleCloneSurvey(survey);
                     }
                   }}
-                  disabled={cloneMutation.isLoading || !cloneTitle.trim()}
+                  disabled={cloneMutation.isPending || !cloneTitle.trim()}
                   className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
                 >
                   Clone

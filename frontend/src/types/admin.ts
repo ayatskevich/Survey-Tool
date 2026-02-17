@@ -87,3 +87,21 @@ export interface BulkArchiveResultDto {
   message: string;
   count: number;
 }
+
+// Analytics Export Types
+
+export interface ExportAnalyticsDto {
+  surveyId: string;
+  format: 'csv' | 'json';
+  fromDate?: string;
+  toDate?: string;
+  includeAnswers: boolean;
+}
+
+export interface ExportResultDto {
+  success: boolean;
+  message: string;
+  fileContent: string;
+  fileName: string;
+  contentType: string;
+}

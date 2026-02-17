@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart,
@@ -14,8 +15,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { Loader2, AlertCircle, TrendingUp } from 'lucide-react';
+import { Loader2, AlertCircle, TrendingUp, Download } from 'lucide-react';
 import { responseService } from '@/services/responseService';
+import { ExportDialog } from '@/components/ExportDialog';
 
 const COLORS = [
   '#3b82f6',
@@ -29,6 +31,7 @@ const COLORS = [
 
 export function AnalyticsDashboard() {
   const { surveyId } = useParams<{ surveyId: string }>();
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   if (!surveyId) {
     return (
@@ -65,11 +68,20 @@ export function AnalyticsDashboard() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Survey Analytics
-          </h1>
-          <p className="mt-2 text-gray-600">{analytics.surveyTitle}</p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Survey Analytics
+            </h1>
+            <p className="mt-2 text-gray-600">{analytics.surveyTitle}</p>
+          </div>
+          <button
+            onClick={() => setShowExportDialog(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export Data
+          </button>
         </div>
 
         {/* Summary Cards */}
@@ -169,6 +181,15 @@ export function AnalyticsDashboard() {
           ))}
         </div>
       </div>
+
+      {/* Export Dialog */}
+      {showExportDialog && (
+        <ExportDialog
+          surveyId={surveyId}
+          surveyTitle={analytics.surveyTitle}
+          onClose={() => setShowExportDialog(false)}
+        />
+      )}
     </div>
   );
 }
