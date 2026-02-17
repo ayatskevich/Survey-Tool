@@ -10,7 +10,7 @@ public class SurveyRepository : Repository<Survey>, ISurveyRepository
     {
     }
 
-    public async Task<IEnumerable<Survey>> GetByUserIdAsync(
+    public async Task<IEnumerable<Survey>> GetUserSurveysAsync(
         Guid userId,
         int page,
         int pageSize,
@@ -25,7 +25,7 @@ public class SurveyRepository : Repository<Survey>, ISurveyRepository
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            query = query.Where(x => x.Title.Contains(searchTerm) || x.Description.Contains(searchTerm));
+            query = query.Where(x => x.Title.Contains(searchTerm) || (x.Description != null && x.Description.Contains(searchTerm)));
         }
 
         return await query
@@ -35,9 +35,23 @@ public class SurveyRepository : Repository<Survey>, ISurveyRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> GetUserSurveyCountAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<int> GetUserSurveysCountAsync(Guid userId, string? searchTerm = null, CancellationToken cancellationToken = default)
+    {
+        var query = Context.Surveys
+            .Where(x => x.UserId == userId);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(x => x.Title.Contains(searchTerm) || (x.Description != null && x.Description.Contains(searchTerm)));
+        }
+
+        return await query.CountAsync(cancellationToken);
+    }
+
+    public async Task<Survey?> GetByIdWithQuestionsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await Context.Surveys
-            .CountAsync(x => x.UserId == userId, cancellationToken);
+            .Include(x => x.Questions.OrderBy(q => q.Order))
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 }

@@ -1,8 +1,10 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SurveyLite.Application;
 using SurveyLite.Infrastructure;
+using SurveyLite.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,9 +71,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policyBuilder =>
     {
         policyBuilder
-            .WithOrigins("http://localhost:5173", "http://localhost:3000")
+            .WithOrigins("http://localhost:5173", "http://localhost:3000", "https://localhost:5173", "https://localhost:3000")
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
@@ -91,5 +94,32 @@ app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// Apply migrations and seed database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        // Apply pending migrations
+        logger.LogInformation("Applying database migrations...");
+        await context.Database.MigrateAsync();
+        logger.LogInformation("Migrations completed successfully.");
+        
+        // Seed database
+        var configuration = services.GetRequiredService<IConfiguration>();
+        logger.LogInformation("Starting database seeding...");
+        await DbInitializer.SeedAsync(context, configuration);
+        logger.LogInformation("Database seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred during migrations or seeding.");
+    }
+}
 
 app.Run();

@@ -6,6 +6,8 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
+import SurveyListPage from '@/pages/SurveyListPage';
+import SurveyBuilderPage from '@/pages/SurveyBuilderPage';
 import './index.css';
 
 function App() {
@@ -21,6 +23,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/surveys"
+              element={
+                <ProtectedRoute>
+                  <SurveyListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/surveys/:surveyId/edit"
+              element={
+                <ProtectedRoute>
+                  <SurveyBuilderPage />
                 </ProtectedRoute>
               }
             />

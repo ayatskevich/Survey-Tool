@@ -2,10 +2,22 @@ using SurveyLite.Domain.Enums;
 
 namespace SurveyLite.Application.DTOs;
 
-public record SurveyDto(
+public record SurveyResponseDto(
     Guid Id,
     string Title,
-    string Description,
+    string? Description,
+    bool IsActive,
+    int QuestionCount,
+    int ResponseCount,
+    DateTime CreatedAt,
+    DateTime? UpdatedAt,
+    IEnumerable<QuestionDto>? Questions = null
+);
+
+public record SurveyListDto(
+    Guid Id,
+    string Title,
+    string? Description,
     bool IsActive,
     int QuestionCount,
     int ResponseCount,
@@ -15,12 +27,14 @@ public record SurveyDto(
 
 public record CreateSurveyDto(
     string Title,
-    string Description
+    string? Description,
+    bool IsActive
 );
 
 public record UpdateSurveyDto(
     string Title,
-    string Description
+    string? Description,
+    bool IsActive
 );
 
 public record QuestionDto(

@@ -34,6 +34,7 @@ public static class DependencyInjection
         
         services.AddSingleton<IJwtService>(new JwtService(secretKey, expirationMinutes));
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }

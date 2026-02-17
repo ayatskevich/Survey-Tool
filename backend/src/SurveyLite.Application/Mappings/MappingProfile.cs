@@ -14,7 +14,12 @@ public class MappingProfile : Profile
         CreateMap<UpdateProfileDto, User>();
 
         // Survey mappings
-        CreateMap<Survey, SurveyDto>()
+        CreateMap<Survey, SurveyResponseDto>()
+            .ForMember(dest => dest.QuestionCount, opt => opt.MapFrom(src => src.Questions.Count))
+            .ForMember(dest => dest.ResponseCount, opt => opt.MapFrom(src => src.Responses.Count))
+            .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions));
+
+        CreateMap<Survey, SurveyListDto>()
             .ForMember(dest => dest.QuestionCount, opt => opt.MapFrom(src => src.Questions.Count))
             .ForMember(dest => dest.ResponseCount, opt => opt.MapFrom(src => src.Responses.Count));
         
