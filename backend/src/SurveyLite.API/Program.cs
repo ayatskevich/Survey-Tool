@@ -2,11 +2,37 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Events;
+using SurveyLite.API.Middleware;
 using SurveyLite.Application;
 using SurveyLite.Infrastructure;
 using SurveyLite.Infrastructure.Persistence;
 
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("Application", "SurveyLite")
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File(
+        "logs/surveylite-.log",
+        rollingInterval: RollingInterval.Day,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
+        retainedFileCountLimit: 30)
+    .CreateLogger();
+
+try
+{
+    Log.Information("Starting SurveyLite API");
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Use Serilog for logging
+builder.Host.UseSerilog();
 
 // Add services
 builder.Services.AddApplication();
@@ -80,9 +106,16 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
+// Add health checks
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
+app.UseSerilogRequestLogging();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -93,6 +126,11 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Map health check endpoints
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/ready");
+
 app.MapControllers();
 
 // Apply migrations and seed database
@@ -122,4 +160,16 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+Log.Information("SurveyLite API started successfully");
 app.Run();
+
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.Information("Shutting down SurveyLite API");
+    Log.CloseAndFlush();
+}

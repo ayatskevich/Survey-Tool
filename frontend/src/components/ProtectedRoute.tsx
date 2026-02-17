@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { Layout } from './Layout';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -29,5 +30,5 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/unauthorized" replace />;
   }
 
-  return <>{children}</>;
+  return <Layout>{children}</Layout>;
 };
