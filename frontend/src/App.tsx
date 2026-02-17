@@ -8,6 +8,8 @@ import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import SurveyListPage from '@/pages/SurveyListPage';
 import SurveyBuilderPage from '@/pages/SurveyBuilderPage';
+import { PublicSurveyPage } from '@/pages/PublicSurveyPage';
+import { ThankYouPage } from '@/pages/ThankYouPage';
 import './index.css';
 
 function App() {
@@ -16,8 +18,15 @@ function App() {
       <Router>
         <AuthProvider>
           <Routes>
+            {/* Public routes */}
+            <Route path="/survey/:surveyId" element={<PublicSurveyPage />} />
+            <Route path="/survey/:surveyId/thank-you" element={<ThankYouPage />} />
+            
+            {/* Auth routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            
+            {/* Protected routes */}
             <Route
               path="/dashboard"
               element={

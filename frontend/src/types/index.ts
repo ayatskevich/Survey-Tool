@@ -109,3 +109,6 @@ export interface ErrorResponse {
   timestamp: string;
   details?: Record<string, string[]>;
 }
+
+// Public Survey Types
+export * from './publicSurvey';
