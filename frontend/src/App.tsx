@@ -6,6 +6,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { SettingsPage } from '@/pages/SettingsPage';
 import SurveyListPage from '@/pages/SurveyListPage';
 import SurveyBuilderPage from '@/pages/SurveyBuilderPage';
 import { PublicSurveyPage } from '@/pages/PublicSurveyPage';
@@ -35,6 +36,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <SettingsPage />
                 </ProtectedRoute>
               }
             />

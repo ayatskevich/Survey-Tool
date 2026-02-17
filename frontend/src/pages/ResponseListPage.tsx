@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  ChevronUpDown,
+  ChevronsUpDown,
   Download,
   Eye,
   Loader2,
@@ -135,7 +135,7 @@ export function ResponseListPage() {
                     >
                       <div className="flex items-center gap-2">
                         Respondent Email
-                        <ChevronUpDown className="w-4 h-4" />
+                        <ChevronsUpDown className="w-4 h-4" />
                       </div>
                     </th>
                     <th
@@ -144,7 +144,7 @@ export function ResponseListPage() {
                     >
                       <div className="flex items-center gap-2">
                         Submitted At
-                        <ChevronUpDown className="w-4 h-4" />
+                        <ChevronsUpDown className="w-4 h-4" />
                       </div>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

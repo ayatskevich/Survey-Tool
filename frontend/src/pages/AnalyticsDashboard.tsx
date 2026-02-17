@@ -124,8 +124,8 @@ export function AnalyticsDashboard() {
                 />
                 <YAxis />
                 <Tooltip
-                  labelFormatter={(date: string) =>
-                    new Date(date).toLocaleDateString()
+                  labelFormatter={(label: any) =>
+                    new Date(label).toLocaleDateString()
                   }
                 />
                 <Line

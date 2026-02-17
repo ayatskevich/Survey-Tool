@@ -115,3 +115,8 @@ export * from './publicSurvey';
 
 // Response & Analytics Types
 export * from './responses';
+// Dashboard Types
+export * from './dashboard';
+
+// Settings Types
+export * from './settings';
