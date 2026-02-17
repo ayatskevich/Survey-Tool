@@ -14,6 +14,8 @@ import { ThankYouPage } from '@/pages/ThankYouPage';
 import { ResponseListPage } from '@/pages/ResponseListPage';
 import { ResponseDetailPage } from '@/pages/ResponseDetailPage';
 import { AnalyticsDashboard } from '@/pages/AnalyticsDashboard';
+import { AdminUsersPage } from '@/pages/AdminUsersPage';
+import { AdminSurveysPage } from '@/pages/AdminSurveysPage';
 import './index.css';
 
 function App() {
@@ -84,6 +86,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AnalyticsDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute>
+                  <AdminUsersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/surveys"
+              element={
+                <ProtectedRoute>
+                  <AdminSurveysPage />
                 </ProtectedRoute>
               }
             />

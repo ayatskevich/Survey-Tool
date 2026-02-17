@@ -120,3 +120,6 @@ export * from './dashboard';
 
 // Settings Types
 export * from './settings';
+
+// Admin Management Types
+export * from './admin';
