@@ -112,3 +112,6 @@ export interface ErrorResponse {
 
 // Public Survey Types
 export * from './publicSurvey';
+
+// Response & Analytics Types
+export * from './responses';

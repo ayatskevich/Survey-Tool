@@ -10,6 +10,9 @@ import SurveyListPage from '@/pages/SurveyListPage';
 import SurveyBuilderPage from '@/pages/SurveyBuilderPage';
 import { PublicSurveyPage } from '@/pages/PublicSurveyPage';
 import { ThankYouPage } from '@/pages/ThankYouPage';
+import { ResponseListPage } from '@/pages/ResponseListPage';
+import { ResponseDetailPage } from '@/pages/ResponseDetailPage';
+import { AnalyticsDashboard } from '@/pages/AnalyticsDashboard';
 import './index.css';
 
 function App() {
@@ -48,6 +51,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <SurveyBuilderPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/surveys/:surveyId/responses"
+              element={
+                <ProtectedRoute>
+                  <ResponseListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/surveys/:surveyId/responses/:responseId"
+              element={
+                <ProtectedRoute>
+                  <ResponseDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/surveys/:surveyId/analytics"
+              element={
+                <ProtectedRoute>
+                  <AnalyticsDashboard />
                 </ProtectedRoute>
               }
             />

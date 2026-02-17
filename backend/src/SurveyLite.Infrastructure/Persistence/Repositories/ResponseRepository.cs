@@ -30,4 +30,28 @@ public class ResponseRepository : Repository<Response>, IResponseRepository
         return await Context.Responses
             .CountAsync(x => x.SurveyId == surveyId, cancellationToken);
     }
+
+    public async Task<Response?> GetByIdWithAnswersAsync(
+        Guid responseId,
+        Guid surveyId,
+        CancellationToken cancellationToken = default)
+    {
+        return await Context.Responses
+            .Where(r => r.Id == responseId && r.SurveyId == surveyId)
+            .Include(r => r.Answers)
+                .ThenInclude(a => a.Question)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Response>> GetAllBySurveyIdWithAnswersAsync(
+        Guid surveyId,
+        CancellationToken cancellationToken = default)
+    {
+        return await Context.Responses
+            .Where(r => r.SurveyId == surveyId)
+            .Include(r => r.Answers)
+                .ThenInclude(a => a.Question)
+            .OrderBy(r => r.SubmittedAt)
+            .ToListAsync(cancellationToken);
+    }
 }
