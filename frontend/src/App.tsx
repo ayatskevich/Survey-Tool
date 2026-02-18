@@ -11,6 +11,7 @@ import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import SurveyListPage from '@/pages/SurveyListPage';
+import { SurveyDetailPage } from '@/pages/SurveyDetailPage';
 import SurveyBuilderPage from '@/pages/SurveyBuilderPage';
 import { PublicSurveyPage } from '@/pages/PublicSurveyPage';
 import { ThankYouPage } from '@/pages/ThankYouPage';
@@ -59,6 +60,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <SurveyListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/surveys/:surveyId"
+              element={
+                <ProtectedRoute>
+                  <SurveyDetailPage />
                 </ProtectedRoute>
               }
             />

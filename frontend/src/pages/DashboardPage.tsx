@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { dashboardService } from '@/services/dashboardService';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -35,11 +36,44 @@ export function DashboardPage() {
     );
   }
 
-  if (error || !stats) {
+  // Check if it's a 404 error (no data yet) or if stats are empty
+  const is404Error = 
+    axios.isAxiosError(error) && error.response?.status === 404 ||
+    (error as any)?.status === 404 ||
+    (error as any)?.response?.status === 404;
+  
+  if (error && !is404Error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <p className="text-red-600">Failed to load dashboard data</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (is404Error || !stats || stats?.surveyStats?.totalSurveys === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center" style={{ minHeight: '500px' }}>
+            <div className="text-center">
+              <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                No surveys yet
+              </h2>
+              <p className="text-gray-600 mb-6 max-w-sm">
+                Start by creating your first survey to collect responses and see your analytics here.
+              </p>
+              <button
+                onClick={() => navigate('/surveys')}
+                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Create Your First Survey
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );

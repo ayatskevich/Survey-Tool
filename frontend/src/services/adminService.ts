@@ -14,7 +14,7 @@ import type {
 // User Management API
 
 export const getUsers = async (filters: UserFiltersDto): Promise<UserPageDto> => {
-  const response = await api.post('/admin/users/search', filters);
+  const response = await api.post('/api/admin/users/search', filters);
   return response.data;
 };
 
@@ -35,17 +35,17 @@ export const suspendUser = async (userId: string, suspend: boolean, reason: stri
 // Survey Management API
 
 export const getSurveys = async (filters: SurveyFiltersDto): Promise<SurveyPageDto> => {
-  const response = await api.post('/admin/surveys/search', filters);
+  const response = await api.post('/api/admin/surveys/search', filters);
   return response.data;
 };
 
 export const cloneSurvey = async (surveyId: string, newTitle: string): Promise<CloneSurveyResultDto> => {
-  const response = await api.post(`/admin/surveys/${surveyId}/clone`, { newTitle });
+  const response = await api.post(`/api/admin/surveys/${surveyId}/clone`, { newTitle });
   return response.data;
 };
 
 export const bulkArchiveSurveys = async (surveyIds: string[], archive: boolean = true): Promise<BulkArchiveResultDto> => {
-  const response = await api.put('/admin/surveys/bulk-archive', {
+  const response = await api.put('/api/admin/surveys/bulk-archive', {
     surveyIds,
     archive,
   });
@@ -55,7 +55,7 @@ export const bulkArchiveSurveys = async (surveyIds: string[], archive: boolean =
 // Analytics Export API
 
 export const exportAnalytics = async (dto: ExportAnalyticsDto): Promise<void> => {
-  const response = await api.post('/analytics/export', dto, {
+  const response = await api.post('/api/analytics/export', dto, {
     responseType: 'blob',
   });
   

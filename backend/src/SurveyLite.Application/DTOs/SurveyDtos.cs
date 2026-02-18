@@ -12,7 +12,10 @@ public record SurveyResponseDto(
     DateTime CreatedAt,
     DateTime? UpdatedAt,
     IEnumerable<QuestionDto>? Questions = null
-);
+)
+{
+    public SurveyResponseDto() : this(Guid.Empty, "", null, false, 0, 0, DateTime.MinValue, null, null) { }
+}
 
 public record SurveyListDto(
     Guid Id,
@@ -23,7 +26,10 @@ public record SurveyListDto(
     int ResponseCount,
     DateTime CreatedAt,
     DateTime? UpdatedAt
-);
+)
+{
+    public SurveyListDto() : this(Guid.Empty, "", null, false, 0, 0, DateTime.MinValue, null) { }
+}
 
 public record CreateSurveyDto(
     string Title,

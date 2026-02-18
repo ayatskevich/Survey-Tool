@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { PublicSurveyDto, SubmitResponseDto, ResponseSubmissionResult } from '@/types/publicSurvey';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5225';
 
 // Create a separate axios instance without authentication
 const publicApi = axios.create({

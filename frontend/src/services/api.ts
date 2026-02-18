@@ -20,7 +20,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 };
 
 export const createApiInstance = (): AxiosInstance => {
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5225';
 
   const instance = axios.create({
     baseURL,
@@ -101,13 +101,15 @@ export const createApiInstance = (): AxiosInstance => {
       }
 
       const errorResponse = error.response?.data as ErrorResponse;
-      return Promise.reject(
-        new Error(
-          errorResponse?.error ||
-            error.message ||
-            'An error occurred'
-        )
+      const customError: any = new Error(
+        errorResponse?.error ||
+          error.message ||
+          'An error occurred'
       );
+      // Preserve status code for error handling
+      customError.status = error.response?.status;
+      customError.response = error.response;
+      return Promise.reject(customError);
     }
   );
 

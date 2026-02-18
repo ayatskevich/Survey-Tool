@@ -10,15 +10,18 @@ namespace SurveyLite.Application.Commands.Questions;
 public class AddQuestionCommandHandler : IRequestHandler<AddQuestionCommand, QuestionDto>
 {
     private readonly ISurveyRepository _surveyRepository;
+    private readonly IRepository<Question> _questionRepository;
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUserService;
 
     public AddQuestionCommandHandler(
         ISurveyRepository surveyRepository,
+        IRepository<Question> questionRepository,
         IMapper mapper,
         ICurrentUserService currentUserService)
     {
         _surveyRepository = surveyRepository;
+        _questionRepository = questionRepository;
         _mapper = mapper;
         _currentUserService = currentUserService;
     }
@@ -55,8 +58,9 @@ public class AddQuestionCommandHandler : IRequestHandler<AddQuestionCommand, Que
             question.SetValidationRules(request.ValidationRules);
         }
 
-        survey.AddQuestion(question);
-        await _surveyRepository.UpdateAsync(survey, cancellationToken);
+        // Add question directly to repository without loading survey's questions collection
+        // This avoids concurrency issues with tracked entities
+        await _questionRepository.AddAsync(question, cancellationToken);
 
         return _mapper.Map<QuestionDto>(question);
     }

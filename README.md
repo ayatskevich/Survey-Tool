@@ -13,7 +13,19 @@ A modern, full-stack survey platform built with React, TypeScript, and ASP.NET C
 - [Database Schema](#database-schema)
 - [Development](#development)
 - [Deployment](#deployment)
+- [AI-Assisted Development](#ai-assisted-development)
 - [Contributing](#contributing)
+
+## 🤖 AI-Assisted Development
+
+This project was built using **AI-assisted development** with GitHub Copilot and Claude AI. For a comprehensive overview of:
+- All key prompts used during development
+- How each phase was implemented via AI prompting
+- Tools and models used (GitHub Copilot, Claude Haiku 4.5)
+- Problem-solving strategies that worked well
+- Insights and recommendations for future AI-assisted projects
+
+**See [AI_WORKFLOW.md](AI_WORKFLOW.md)** for the complete prompt log, workflow documentation, and lessons learned.
 
 ## ✨ Features
 
@@ -372,7 +384,27 @@ jobs:
         run: ./deploy.sh
 ```
 
-## 🤝 Contributing
+## � AI-Assisted Development Details
+
+This project demonstrates the effectiveness of AI-assisted full-stack development. For comprehensive documentation including:
+
+- **Prompt History**: All key prompts used to build each phase, from authentication to production deployment
+- **Architecture Decisions**: Why CQRS, DDD, and Repository patterns were chosen
+- **Problem-Solving Strategies**: How issues were debugged and refined through iterative prompting
+- **Prompting Patterns**: What worked well and what didn't
+- **Tool Recommendations**: When to use GitHub Copilot vs Claude AI vs other tools
+- **Lessons Learned**: Insights from building 100+ files with AI assistance
+
+**👉 See [AI_WORKFLOW.md](AI_WORKFLOW.md)** - Complete prompt log and development workflow documentation
+
+### Quick Stats
+- **8 Development Phases**: From auth to production-ready platform
+- **100+ Files Generated**: Backend services, frontend components, configurations
+- **25+ API Endpoints**: Implemented via CQRS pattern
+- **50+ React Components**: built with TypeScript and React Query v5
+- **Success Rate**: ~85% correct first implementation, 1-2 refinement rounds average
+
+## �🤝 Contributing
 
 ### Development Workflow
 1. Create a feature branch from `main`

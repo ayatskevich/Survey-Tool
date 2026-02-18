@@ -31,13 +31,27 @@ public class Repository<T> : IRepository<T> where T : class
 
     public virtual async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
-        Context.Set<T>().Update(entity);
+        var entry = Context.Entry(entity);
+        
+        // Only call Update() for detached entities
+        // For tracked entities, rely on change tracking
+        if (entry.State == EntityState.Detached)
+        {
+            Context.Set<T>().Update(entity);
+        }
+        // For tracked entities (Modified, Added, etc.), EF will handle them
+        
         await Context.SaveChangesAsync(cancellationToken);
     }
 
     public virtual async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
     {
         Context.Set<T>().Remove(entity);
+        await Context.SaveChangesAsync(cancellationToken);
+    }
+
+    public virtual async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
         await Context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -5,8 +5,6 @@ import {
   PaginatedResponsesDto,
 } from '@/types/responses';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5225';
-
 export const responseService = {
   // Get all responses for a survey (paginated)
   getSurveyResponses: async (
@@ -15,7 +13,7 @@ export const responseService = {
     pageSize = 10
   ): Promise<PaginatedResponsesDto> => {
     const response = await api.get(
-      `${API_BASE_URL}/api/surveys/${surveyId}/responses`,
+      `/api/surveys/${surveyId}/responses`,
       { params: { page, pageSize } }
     );
     return response.data;
@@ -27,7 +25,7 @@ export const responseService = {
     responseId: string
   ): Promise<ResponseDetailDto> => {
     const response = await api.get(
-      `${API_BASE_URL}/api/surveys/${surveyId}/responses/${responseId}`
+      `/api/surveys/${surveyId}/responses/${responseId}`
     );
     return response.data;
   },
@@ -35,7 +33,7 @@ export const responseService = {
   // Get analytics for a survey
   getSurveyAnalytics: async (surveyId: string): Promise<SurveyAnalyticsDto> => {
     const response = await api.get(
-      `${API_BASE_URL}/api/surveys/${surveyId}/analytics`
+      `/api/surveys/${surveyId}/analytics`
     );
     return response.data;
   },
@@ -43,7 +41,7 @@ export const responseService = {
   // Export survey responses as CSV
   exportResponses: async (surveyId: string): Promise<void> => {
     const response = await api.get(
-      `${API_BASE_URL}/api/surveys/${surveyId}/export`,
+      `/api/surveys/${surveyId}/export`,
       { responseType: 'blob' }
     );
 
